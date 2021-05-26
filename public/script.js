@@ -6,7 +6,7 @@ class UI {
     this.orderNumber = this.itemList.length + 1;
     this.createElement();
     this.isEdit = true;
-    this.isShowedBasket = true;
+    this.isShowedShoppingCart = true;
   }
 
   static getHTMLElement(element, method, action, fn) {
@@ -35,12 +35,12 @@ class UI {
     UI.getHTMLElement(".add-btn", "addEventListener", "click", this.createNewItemObject.bind(this));
     UI.getHTMLElement(".clear-btn", "addEventListener", "click", this.clearShoppingList.bind(this));
     UI.getHTMLElement(".back-btn", "addEventListener", "click", this.resetElements.bind(this, true));
-    UI.getHTMLElement(".basket-show-btn", "addEventListener", "click", this.showBasket.bind(this));
+    UI.getHTMLElement(".shoppingcart-show-btn", "addEventListener", "click", this.showShoppingCart.bind(this));
     UI.getHTMLElement(".collection", "addEventListener", "click", this.getItemContent.bind(this));
   }
 
   createNewItemObject(e) {
-    this.isShowedBasket = false;
+    this.isShowedShoppingCart = false;
     e.preventDefault();
     const handleEmptyInput = UI.getItem() === "" ? false : UI.getQuantity() === "" ? false : UI.getPrice() === "" ? false : true;
     if (!handleEmptyInput) {
@@ -170,7 +170,7 @@ class UI {
   }
 
   sendData(data) {
-    fetch(`/basket`, {
+    fetch(`/shoppingcart`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -179,8 +179,8 @@ class UI {
     });
   }
 
-  showBasket() {
-    if (!this.isShowedBasket) return;
+  showShoppingCart() {
+    if (!this.isShowedShoppingCart) return;
     fetch("/items.json", {
       method: "GET",
       headers: {
@@ -195,7 +195,7 @@ class UI {
           this.itemList.push(newItem);
         });
       });
-    this.isShowedBasket = false;
+    this.isShowedShoppingCart = false;
   }
 }
 

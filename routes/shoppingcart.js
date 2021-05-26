@@ -1,13 +1,13 @@
-const basket = (app, fs, bodyParser) => {
+const shoppingCart = (app, fs, bodyParser) => {
   const jsonParser = bodyParser.json();
 
-  const getBasketContent = (req, res) => {
+  const getShoppingCartContent = (req, res) => {
     fs.readFile("./public/items.json", (err, data) => {
       if (err) {
         throw err;
       }
       const jsonData = JSON.parse(data);
-      let html = `<h1>My basket</h1> <form action="/">
+      let html = `<h1>My Shopping Cart</h1> <form action="/">
       <input type="submit" value="Back"/> </form>`;
       jsonData.forEach((element) => {
         html += `<br> <li class="collection-item" id="${element.id}">
@@ -27,7 +27,7 @@ const basket = (app, fs, bodyParser) => {
     });
   };
 
-  app.route("/basket").get(getBasketContent).post(jsonParser, postClientData);
+  app.route("/shoppingcart").get(getShoppingCartContent).post(jsonParser, postClientData);
 };
 
-module.exports = basket;
+module.exports = shoppingCart;
