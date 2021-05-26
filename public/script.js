@@ -171,7 +171,7 @@ class UI {
 
   sendData(data) {
     fetch(`/basket`, {
-      method: "POST", // or 'PUT'
+      method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
@@ -187,7 +187,7 @@ class UI {
         "Content-Type": "application/json",
       },
     })
-      .then((r) => r.json())
+      .then((response) => response.json())
       .then((data) => {
         data.map((elem) => {
           const newItem = new ShopItem(elem.id, elem.item, elem.quantity, elem.price);
