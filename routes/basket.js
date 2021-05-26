@@ -22,15 +22,12 @@ const basket = (app, fs, bodyParser) => {
   };
 
   const postClientData = (req, res) => {
-    console.log(req.body);
     fs.writeFile("./public/items.json", JSON.stringify(req.body), (err) => {
       if (err) return console.log(err);
     });
   };
 
   app.route("/basket").get(getBasketContent).post(jsonParser, postClientData);
-  // app.get("/basket", getBasketContent);
-  // app.post("/basket", jsonParser, postClientData);
 };
 
 module.exports = basket;

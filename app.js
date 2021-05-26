@@ -3,8 +3,9 @@ const fs = require("fs");
 const bodyParser = require("body-parser");
 const app = express();
 const basketRoots = require("./routes/basket");
+const port = 3000;
 
-app.listen(3000, () => {
+app.listen(port, () => {
   console.log("Server is running");
 });
 
