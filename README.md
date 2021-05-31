@@ -8,7 +8,7 @@
 
 ## General info
 
-This project is a simple shopping cart with possibilites to add/update/remove items from client request and store them in json file with using basic API. The code in client-side part was created in clear JS (without any frameworks), and the server-side part was made in Node.js and Express.
+It's a simple shopping cart with add/update/remove options on client's request. Requests are stored in a json file using basic API created with Node.js/Express. The client-side code was written in clear (vanilla) JS (no frameworks), server side uses Node.js and Express.
 
 ## Technologies
 
