@@ -57,7 +57,7 @@ class UI {
 
   static displayItemList(id, item, quantity, price, items) {
     const html = `<li class="collection-item" id="${id}">
-                    <strong>Item: </strong>${item} || <strong>Quantity: </strong>${quantity} || <strong>Price: </strong>${price} zł
+                    <strong>Item: </strong>${item} || <strong>Quantity: </strong>${quantity} || <strong>Price: </strong>${price} $
                       <a href="#" class="secondary-content">
                         <i class="fa fa-pencil edit"></i>
                       </a>
@@ -110,7 +110,7 @@ class UI {
       this.itemList[index].item = UI.getHTMLElement("#item-name").value;
       this.itemList[index].quantity = UI.getHTMLElement("#item-quantity").value;
       this.itemList[index].price = UI.getHTMLElement("#item-price").value;
-      document.getElementById(`${this.id}`).innerHTML = `<strong>Przedmiot: </strong>${
+      document.getElementById(`${this.id}`).innerHTML = `<strong>Item: </strong>${
         UI.getHTMLElement("#item-name").value
       } || <strong>Quantity: </strong>${UI.getHTMLElement("#item-quantity").value} || <strong>Price: </strong>${
         UI.getHTMLElement("#item-price").value
