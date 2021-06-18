@@ -1,8 +1,22 @@
 const shoppingCart = (app, fs, bodyParser, path) => {
   const jsonParser = bodyParser.json();
 
+  const renderMainPage = (req, res) => {
+    res.render("index");
+  };
+
   const getShoppingCartContent = (req, res) => {
-    res.sendFile(path.join(__dirname, "../public/shoppingcart/shoppingcart.html"));
+    fs.readFile("./public/items.json", (err, data) => {
+      if (err) {
+        throw err;
+      }
+      const jsonData = JSON.parse(data);
+
+      const message = jsonData.length > 0 ? "Proceed to checkout" : "Oops, your cart is empty. Please back and add some items.";
+      const route = jsonData.length > 0 ? "/shoppingcart/checkout" : "/";
+
+      res.render("shoppingcart", { route: route, message: message });
+    });
   };
 
   const getSingleItemContent = (req, res) => {
@@ -10,60 +24,36 @@ const shoppingCart = (app, fs, bodyParser, path) => {
       if (err) {
         throw err;
       }
+
       const jsonData = JSON.parse(data);
-      let html = `<!DOCTYPE html>
-      <html lang="en">
-        <head>
-          <meta charset="UTF-8" />
-          <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-          <meta http-equiv="X-UA-Compatible" content="ie=edge" />
-          <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/css/materialize.min.css" />
-          <link
-            href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"
-            rel="stylesheet"
-            integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN"
-            crossorigin="anonymous"
-          />
-          <title>Fast Shop</title>
-        </head>`;
+
+      let item, id, price, quantity, totalItemPrice;
 
       jsonData.forEach((element) => {
         if (req.params.id == element.id) {
-          html += `<body>
-          <!-- Navbar -->
-          <nav>
-            <div class="nav-wrapper grey">
-              <div class="container">
-                <a href="/" class="brand-logo left">Fast Shop</a>
-                <ul class="right">
-                  <li>
-                    <a href="/shoppingcart" class="clear-btn btn grey lighten-1">Back</a>
-                  </li>
-                </ul>
-            </div>
-          </nav>
-          <br />
-          <div class="container">
-            <h3 class="center-align">Item Price: <span class="item-price">${Number(element.quantity) * Number(element.price)} $</span></h3>
-            <!-- Item List -->
-            <ul id="item-list" class="collection">
-            <br> <li class="collection-item" id="${element.id}">
-            <strong>Item: </strong>${element.item} || <strong>Quantity: </strong>${element.quantity} || <strong>Price: </strong>${element.price} zł
-          </li>
-          </ul>
-          </div>
-      
-          <script
-            src="https://code.jquery.com/jquery-3.2.1.min.js"
-            integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
-            crossorigin="anonymous"
-          ></script>
-          <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/js/materialize.min.js"></script>
-        </body>
-      </html>`;
+          item = element.item;
+          price = element.price;
+          id = element.id;
+          quantity = element.quantity;
+          totalItemPrice = Number(element.quantity) * Number(element.price);
         }
       });
-      res.send(html);
+      res.render("item-info", { item: item, price: price, id: id, quantity: quantity, totalItemPrice: totalItemPrice });
+    });
+  };
+
+  const getCheckoutContent = (req, res) => {
+    fs.readFile("./public/items.json", (err, data) => {
+      if (err) {
+        throw err;
+      }
+      const jsonData = JSON.parse(data);
+
+      const message =
+        jsonData.length > 0
+          ? `Congratulations! You have just bought item without paying for it! Your shopping cart has now ${jsonData.length} items.`
+          : `Congratulations! You have just bought items without paying for them! Your shopping cart is now empty.`;
+      res.render("checkout", { message: message });
     });
   };
 
@@ -73,8 +63,11 @@ const shoppingCart = (app, fs, bodyParser, path) => {
     });
   };
 
-  app.route("/shoppingcart/:id").get(getSingleItemContent);
+  app.route("/").get(renderMainPage);
   app.route("/shoppingcart").get(getShoppingCartContent).post(jsonParser, postClientData);
+  app.route("/shoppingcart/items/:id").get(getSingleItemContent).post(jsonParser, postClientData);
+  app.route("/shoppingcart/checkout").get(getCheckoutContent).post(jsonParser, postClientData);
+  app.route("/shoppingcart/items").get(getCheckoutContent);
 };
 
 module.exports = shoppingCart;

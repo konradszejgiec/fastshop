@@ -1,0 +1,50 @@
+doctype html
+html(lang="en")
+head 
+meta(charset="UTF-8")
+meta(name="viewport" content="width=device-width, initial-scale=1.0")
+meta(http-equiv="X-UA-Compatible" content="ie=edge")
+link(rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/css/materialize.min.css")
+link(href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"
+      rel="stylesheet"
+      integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN"
+      crossorigin="anonymous")
+title Fast Shop
+body 
+    nav 
+        div.nav-wrapper.grey
+            div.container
+                a(href="/" class="brand-logo left") Fast Shop 
+                ul.right 
+                    li
+                        a(href="/" class="shoppingcart-show-btn btn grey lighten-1") Show My Shopping Cart
+                    li
+                        a(href="./shoppingcart" class="shoppingcart-btn btn grey lighten-1") Proceed To Checkout
+                    li
+                        a(href="#" class="clear-btn btn grey lighten-1") Clear All                
+         
+    br
+    div.container
+        div.card
+            div.card-content
+                span.card-title Add Item
+                form.col
+                    div.row
+                        div.input-field.col.s7
+                            input(type="text" placeholder="Item" id="item-name") 
+                            label(for="item-name")
+                        div.input-field.col.s2    
+                            input(type="number" placeholder="Price" id="item-quantity") 
+                            label(for="item-quantity")
+                        div.input-field.col.s3    
+                            input(type="number" placeholder="Quantity" id="item-price") 
+                            label(for="item-price")
+                        button.add-btn.btn.blue.darken-3 Add Item
+                            i.fa.fa-plus 
+                        button.back-btn.btn.grey.pull-right.lighten-1 Back
+                            i.fa.fa-chevron-circle-left
+        h3.center-align 
+            | Total Price: 
+            span.total-price 0
+        ul#item-list.collection
+    script(src="script.js") 

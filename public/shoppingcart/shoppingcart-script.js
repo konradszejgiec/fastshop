@@ -13,7 +13,7 @@ class ShoppingCart {
         "beforeend",
         `<li class="collection-item" id="${element.id}">
          <strong>Item: </strong>${element.item} || <strong>Quantity: </strong>${element.quantity} || <strong>Price: </strong>${element.price} $
-          <a href="${element.id}" class="secondary-content">
+          <a href="./items/${element.id}" class="secondary-content">
             <i class="fa fa-arrow-circle-up"></i>
           </a>
         </li>`
@@ -21,6 +21,7 @@ class ShoppingCart {
       totalPrice += Number(element.price) * Number(element.quantity);
     });
     document.querySelector(".total-price").innerText = totalPrice;
+    document.querySelector(".proceed-btn").addEventListener("click", this.clearDataFromCart.bind(this));
   }
 
   getShoppingCartContent() {
@@ -38,6 +39,16 @@ class ShoppingCart {
         });
         this.showShoppingCart();
       });
+  }
+
+  clearDataFromCart() {
+    fetch(`/shoppingcart/checkout`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify([]),
+    });
   }
 }
 

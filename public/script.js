@@ -179,7 +179,8 @@ class UI {
     });
   }
 
-  showShoppingCart() {
+  showShoppingCart(e) {
+    e.preventDefault();
     if (!this.isShowedShoppingCart) return;
     fetch("/items.json", {
       method: "GET",
