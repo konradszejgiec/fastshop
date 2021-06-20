@@ -1,211 +1,231 @@
 "use strict";
 
+/**
+ * Hej! Myślę, że rozwijasz się w bardzo dobrym kierunku i będzie z Ciebie dobry koder! Ogarniasz, a warsztat przyjdzie z czasem :-)
+ * Nie przejmują się ilością komentarzy - starałem się opisać, co i dlaczego zmieniam. Nie przejmuj się, jeżeli czegoś nie kapujesz:
+ * eksperymentuj, zmieniaj i patrz co się dzieje. Zrozumienie przyjdzei z czasem.
+ * 
+ * Kolejność przeglądania zmodyfikowanych plików:
+ * 1. ten :-)
+ * 2. cart.js
+ * 3. ui_utils.js
+ * 4. cart_service_client.js
+ * 5. backendowy shoppingcart.js
+ * 
+ * ------
+ * PS W 'normalnym' kodzie w firmie, raczej tyle komentarzy nie znajdziesz ;-)
+ * ------
+ * 
+ * Część funkcjonalności wydzieliłem do trzech:
+ * 
+ * 1. cart.js - obsługuje całą logikę koszyka niezależną od UI (widoku)
+ * 2. ui_utils.js - reużywalne funkcje pomocnicze, np. ustaw tekst, usuń element, przypnij eventHandler
+ * 3. cart_service_client.js - funkcje obsługujące komunikację z serwerem
+ * 
+ * Pomyśl, jak można jeszcze podzielić widok, na mniejsze logiczne kawałki?
+ * Pro tips: 
+ *  - Może warto dopisać klasę obsługującą tylko górną belkę?
+ *  - Może warto dopisać klasę obsługującą tylko przyciski edycji? I tak dalej ;-)
+ */
 class UI {
+
+  /**
+   * Cały stan (tj. aktualne dane) koszyka przechowuje obiekt klasy ShoppingCart
+   * Klasa UI zajmuje się tylko wyświetlaniem danych i obsługą zdarzeń interfejsu.
+   */
   constructor() {
-    this.itemList = [];
-    this.orderNumber = this.itemList.length + 1;
-    this.createElement();
-    this.isEdit = true;
-    this.isShowedShoppingCart = true;
+    this.shoppingCart = new ShoppingCart();
+    this.bindActionButtons();
   }
 
-  static getHTMLElement(element, method, action, fn) {
-    if (method === "addEventListener") return document.querySelector(element).addEventListener(action, fn);
-    if (method === "insertAdjacentHTML") {
-      return document.querySelector(element).insertAdjacentHTML(action, fn);
-    } else return document.querySelector(element);
+ /**
+   * Przypinamy akcje do przycisków wyrenderowanych w HTMLu
+   */
+  bindActionButtons() {
+    bindClickActionTo(".add-btn", this.addToCart.bind(this));
+    bindClickActionTo(".clear-btn", this.clearShoppingList.bind(this));
+    bindClickActionTo(".back-btn", this.resetItemForm.bind(this));
+    bindClickActionTo(".shoppingcart-show-btn", this.showShoppingCart.bind(this));
   }
 
-  static getItem() {
-    return UI.getHTMLElement("#item-name").value;
+  /**
+   * Tutaj przeróbka polegała na tym, że renderowanie koszyka zawsze 
+   * czyści wszystkie elementy, a później ponownie wyświetla tylko te wymagane.
+   * 
+   * W ten sposób nie trzeba sprawdzać stanu (isShowedShoppingCart, isEdit) i przestawiać wartości tych flag 
+   * w wielu miejscach w kodzie.
+   * 
+   * Po prostu zawsze najpierw wszystko resetujemy, a później wyświetlamy od nowa tylko to, co trzeba.
+   * 
+   * Krok po kroku:
+   * 1. zresteuj wszystko
+   * 2. wyświetl wszystkie przedmioty po kolei
+   * 3. wyświetl sumę
+   */
+   renderCart() {
+    this.resetCartView();
+    this.shoppingCart.items().forEach(item => {
+      this.renderCartItem(item);
+    });
+    this.renderCartTotal();
   }
 
-  static getQuantity() {
-    return UI.getHTMLElement("#item-quantity").value;
+  /**
+   * Wyświetla pojedyńczy przedmiot:
+   * 
+   * 1. pobiera templatkę html dla przedmiotu
+   * 2. wkłada go do UL
+   * 3. przypina metodę displayEditPanel do przycisku edycjij
+   * @param {*} cartItem 
+   */
+  renderCartItem(cartItem) {
+    const html = getCartItemHTML(cartItem);
+    insertElementAfter("#item-list", html);
+    bindClickActionTo(`#item-${cartItem.name}`, this.dislayEditPanel.bind(this));
   }
 
-  static getPrice() {
-    return UI.getHTMLElement("#item-price").value;
+  /**
+   * Czyścimy formularz dodawania przedmiotu
+   * Ukrywamy przyciski edycji (jeśli są pokazane)
+   * Czyścimy widok listy przedmiotów (bo nie samą listę!)
+   */
+  resetCartView() {
+    this.resetItemForm();
+    this.hideEditButtons();
+    clearElementHTML('#item-list');
   }
 
-  createElement() {
-    UI.getHTMLElement("#item-name", "addEventListener", "input", UI.getItem);
-    UI.getHTMLElement("#item-quantity", "addEventListener", "input", UI.getQuantity);
-    UI.getHTMLElement("#item-price", "addEventListener", "input", UI.getPrice);
-    UI.getHTMLElement(".add-btn", "addEventListener", "click", this.createNewItemObject.bind(this));
-    UI.getHTMLElement(".clear-btn", "addEventListener", "click", this.clearShoppingList.bind(this));
-    UI.getHTMLElement(".back-btn", "addEventListener", "click", this.resetElements.bind(this, true));
-    UI.getHTMLElement(".shoppingcart-show-btn", "addEventListener", "click", this.showShoppingCart.bind(this));
-    UI.getHTMLElement(".collection", "addEventListener", "click", this.getItemContent.bind(this));
+  renderCartTotal() {
+    const total = this.shoppingCart.calculateTotal();
+    setElementText(".total-price", total);
   }
 
-  createNewItemObject(e) {
-    this.isShowedShoppingCart = false;
-    e.preventDefault();
-    const handleEmptyInput = UI.getItem() === "" ? false : UI.getQuantity() === "" ? false : UI.getPrice() === "" ? false : true;
-    if (!handleEmptyInput) {
-      alert("Please fill all empty fields!");
+  /**
+   * Tutaj obsługujemy kliknięcie w przycisk dodaj do koszyka
+   * 
+   * 1. sprawdzamy, czy wszystkie wymagane pola są wypełnione
+   * 2. dodajemy przedmiot do koszyka
+   * 3. wysyłamy dane do backendu i jeśli są poprawnie zapisane, wyświetlamy koszyk
+   * 
+   * @param {klinięcie} event 
+   * @returns 
+   */
+  addToCart(event) {
+    event.preventDefault();
+    if (!this.allInputsFilled()) {
+      alert('Please fill all empty fields');
       return;
-    }
-    this.orderNumber = this.refreshId(Math.max(...this.itemList.map((item) => item.id), 0), this.itemList.length + 1);
-    const newItem = new ShopItem(this.orderNumber, UI.getItem(), UI.getQuantity(), UI.getPrice());
-    this.itemList.push(newItem);
-    this.sendData(this.itemList);
-    UI.displayItemList(this.orderNumber, UI.getItem(), UI.getQuantity(), UI.getPrice(), this.itemList);
-    this.resetElements();
+    };
+
+    this.shoppingCart.addItem(this.getItemName(), this.getItemQuantity(), this.getItemPrice());
+    sendCartItems(this.shoppingCart.items())
+      .then(() => this.renderCart());
   }
 
-  static displayItemList(id, item, quantity, price, items) {
-    const html = `<li class="collection-item" id="${id}">
-                    <strong>Item: </strong>${item} || <strong>Quantity: </strong>${quantity} || <strong>Price: </strong>${price} $
-                      <a href="#" class="secondary-content">
-                        <i class="fa fa-pencil edit"></i>
-                      </a>
-                  </li>`;
-    UI.getHTMLElement("#item-list", "insertAdjacentHTML", "beforeend", html);
-    UI.priceSum(items);
+  /**
+   * Analogicznie do dodawania:
+   * 
+   * 1. sprawdzamy czy wszystko uzupełnione
+   * 2. modyfikujemy koszyk
+   * 3. wysyłamy dane do backendu
+   * 4. renderujemy
+   * 
+   * @param {nazwa aktualizowanego przedmiotu} itemName 
+   * @returns 
+   */
+  updateCartItem(itemName) {
+    if (!this.allInputsFilled()) {
+      alert('Please fill all empty fields');
+      return;
+    };
+
+    this.shoppingCart.updateItem(itemName, this.getItemName(), this.getItemQuantity(), this.getItemPrice());
+    sendCartItems(this.shoppingCart.items())
+      .then(() => this.renderCart());
   }
 
-  displayEditPanel() {
-    const html = `<button class="update-btn btn orange">
-                    <i class="fa fa-pencil-square-o"></i> Edit Item
-                  </button>
-                  <button class="delete-btn btn red">
-                    <i class="fa fa-remove"></i> Delete Item
-                  </button>`;
-    if (document.body.contains(UI.getHTMLElement(".update-btn"))) return;
-    UI.getHTMLElement(".row", "insertAdjacentHTML", "beforeend", html);
+  deleteCartItem(itemName) {
+    this.shoppingCart.deleteItemBy(itemName);
+    sendCartItems(this.shoppingCart.items())
+      .then(() => this.renderCart());
   }
 
-  getItemContent(e) {
-    this.id = e.target.parentElement.parentElement.id;
-    if (!e.target.matches(".fa-pencil")) return;
-    this.displayEditPanel();
-    this.itemList.forEach((item) => {
-      if (item.id == this.id) return (this.isEdit = true);
-    });
-    if (!this.isEdit) return;
-    const index = this.itemList.findIndex((item) => item.id == this.id);
-    UI.getHTMLElement("#item-name").value = this.itemList[index].item;
-    UI.getHTMLElement("#item-quantity").value = this.itemList[index].quantity;
-    UI.getHTMLElement("#item-price").value = this.itemList[index].price;
-    this.editItem(UI.getHTMLElement(".update-btn"));
-    this.deleteItem(UI.getHTMLElement(".delete-btn"));
+  allInputsFilled() {
+    const nameFilled = this.getItemName() != "";
+    const quantityFilled = this.getItemQuantity() != "";
+    const priceFilled = this.getItemPrice() != "";
+    return nameFilled && quantityFilled && priceFilled;
   }
 
-  static priceSum(items) {
-    let total = 0;
-    items.map((item) => {
-      total += Number(item.price) * Number(item.quantity);
-    });
-    UI.getHTMLElement(".total-price").innerText = total;
+  displayEditButtons(itemName) {
+    this.hideEditButtons();
+    this.displayUpdateButton(itemName);
+    this.displayDeleteButton(itemName);
   }
 
-  editItem(button) {
-    if (!document.body.contains(button)) return;
-    UI.getHTMLElement(".update-btn", "addEventListener", "click", (e) => {
-      e.preventDefault();
-      if (!this.isEdit) return;
-      const index = this.itemList.findIndex((item) => item.id == this.id);
-      this.itemList[index].item = UI.getHTMLElement("#item-name").value;
-      this.itemList[index].quantity = UI.getHTMLElement("#item-quantity").value;
-      this.itemList[index].price = UI.getHTMLElement("#item-price").value;
-      document.getElementById(`${this.id}`).innerHTML = `<strong>Item: </strong>${
-        UI.getHTMLElement("#item-name").value
-      } || <strong>Quantity: </strong>${UI.getHTMLElement("#item-quantity").value} || <strong>Price: </strong>${
-        UI.getHTMLElement("#item-price").value
-      } zł
-          <a href="#" class="secondary-content">
-            <i class="fa fa-pencil"></i>
-          </a>`;
-      UI.priceSum(this.itemList);
-      this.resetElements(true);
-      this.isEdit = false;
-      this.sendData(this.itemList);
+  hideEditButtons() {
+    removeElementById("delete-btn");
+    removeElementById("update-btn");
+  }
+
+  displayUpdateButton(itemName) {
+    const buttonHtml = getUpdateButtonHTML();
+    insertElementAfter(".row", buttonHtml);
+    bindClickActionTo('#update-btn', (event) => { 
+      event.preventDefault();
+       this.updateCartItem(itemName);
     });
   }
 
-  deleteItem(button) {
-    if (!document.body.contains(button)) return;
-    UI.getHTMLElement(".delete-btn", "addEventListener", "click", (e) => {
-      e.preventDefault();
-      if (!this.isEdit) return;
-      const index = this.itemList.findIndex((item) => item.id == this.id);
-      this.itemList.splice(index, 1);
-      this.resetElements(true);
-      document.getElementById(`${this.id}`).remove();
-      UI.priceSum(this.itemList);
-      this.isEdit = false;
-      this.sendData(this.itemList);
-    });
+  displayDeleteButton(itemName) {
+    const buttonHtml = getDeleteButtonHTML();
+    insertElementAfter(".row", buttonHtml);
+    bindClickActionTo('#delete-btn', () => this.deleteCartItem(itemName));
   }
 
-  refreshId(lastId, currentId) {
-    if (lastId >= currentId) {
-      return lastId + 1;
-    } else return this.itemList.length + 1;
+  dislayEditPanel(e) {
+    const itemName = getItemNameFromClick(e);
+    this.displayEditedItemContent(itemName);
+    this.displayEditButtons(itemName);
   }
 
-  resetElements(allElements = false) {
-    if (allElements) {
-      UI.getHTMLElement("#item-name").value = "";
-      UI.getHTMLElement("#item-quantity").value = "";
-      UI.getHTMLElement("#item-price").value = "";
-      if (!document.body.contains(UI.getHTMLElement(".update-btn"))) return;
-      UI.getHTMLElement(".update-btn").remove();
-      UI.getHTMLElement(".delete-btn").remove();
-    } else {
-      UI.getHTMLElement("#item-name").value = "";
-      UI.getHTMLElement("#item-quantity").value = "";
-      UI.getHTMLElement("#item-price").value = "";
-    }
+  displayEditedItemContent(itemName) {
+    const cartItem = this.shoppingCart.getItemBy(itemName);
+    setElementValue("#item-name", cartItem.name);
+    setElementValue("#item-quantity", cartItem.quantity);
+    setElementValue("#item-price", cartItem.price);
+  }
+
+  resetItemForm() {
+    clearElementValue("#item-name");
+    clearElementValue("#item-quantity");
+    clearElementValue("#item-price");
   }
 
   clearShoppingList() {
-    this.resetElements(true);
-    this.itemList = [];
-    document.querySelectorAll(".collection-item").forEach((item) => item.remove());
-    UI.getHTMLElement(".total-price").innerText = 0;
-    this.sendData(this.itemList);
+    this.shoppingCart.clear();
+    sendCartItems(this.shoppingCart.items())
+      .then(() => this.renderCart());
   }
 
-  sendData(data) {
-    fetch(`/shoppingcart`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(data),
-    });
+  getItemName() {
+    return getElementValue("#item-name");
+  }
+
+  getItemQuantity() {
+    return getElementValue("#item-quantity");
+  }
+
+  getItemPrice() {
+    return getElementValue("#item-price");
   }
 
   showShoppingCart(e) {
     e.preventDefault();
-    if (!this.isShowedShoppingCart) return;
-    fetch("/items.json", {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-      },
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        data.map((elem) => {
-          const newItem = new ShopItem(elem.id, elem.item, elem.quantity, elem.price);
-          UI.displayItemList(elem.id, elem.item, elem.quantity, elem.price, data);
-          this.itemList.push(newItem);
-        });
-      });
-    this.isShowedShoppingCart = false;
-  }
-}
-
-class ShopItem {
-  constructor(id, item, quantity, price) {
-    this.id = id;
-    this.item = item;
-    this.quantity = quantity;
-    this.price = price;
+    fetchShoppingCart(items => {
+      this.shoppingCart = ShoppingCart.from(items);
+      this.renderCart();
+    });
   }
 }
 

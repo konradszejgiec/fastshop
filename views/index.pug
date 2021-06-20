@@ -34,10 +34,10 @@ body
                             input(type="text" placeholder="Item" id="item-name") 
                             label(for="item-name")
                         div.input-field.col.s2    
-                            input(type="number" placeholder="Price" id="item-quantity") 
+                            input(type="number" placeholder="Quantity" id="item-quantity") 
                             label(for="item-quantity")
                         div.input-field.col.s3    
-                            input(type="number" placeholder="Quantity" id="item-price") 
+                            input(type="number" placeholder="Price" id="item-price") 
                             label(for="item-price")
                         button.add-btn.btn.blue.darken-3 Add Item
                             i.fa.fa-plus 
@@ -47,4 +47,10 @@ body
             | Total Price: 
             span.total-price 0
         ul#item-list.collection
-    script(src="script.js") 
+
+    //- Kolejność wciągania skryptów jest ważna! Żeby funkcje widoczne w cart.js, ui_utils.js i cart_service_client.js
+    //- były widoczne w script.js, muszą zostać załadowane wcześniej
+    script(src="cart.js")
+    script(src="ui_utils.js")
+    script(src="cart_service_client.js") 
+    script(src="script.js")

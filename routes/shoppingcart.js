@@ -57,9 +57,21 @@ const shoppingCart = (app, fs, bodyParser, path) => {
     });
   };
 
+  /**
+   * Zmieniła się struktura danych koszyka na frontendzie, może i tutaj warto byłoby zmienić? :-) 
+   */
   const postClientData = (req, res) => {
+    // Tutaj był bug - nigdy nie odsyłałeś odpowiedzi (res.end()), co kończyło się tym, że Promise po stronie frontendu
+    // nigdy się nie kończył.
     fs.writeFile("./public/items.json", JSON.stringify(req.body), (err) => {
-      if (err) return console.log(err);
+      if (err) {
+        // nie udało się zapisać, zwracamy kod błędu po stronie serwera (500 Internal Server Error) i logujemy bład do konsoli.
+        res.status(500).end();
+        console.log(err);
+      } else {
+        // udało się zapisać, zwracamy kod odpowiedzi 201 Created
+        res.status(201).end();
+      };
     });
   };
 

@@ -1,3 +1,11 @@
+/**
+ * Nie przeglądałem dokładnie kodu backednowego :-) 
+ * 
+ * Generalnie te same zasady, jak opisywałem w wypadku tego, co się w aplikacji frontowej działo:
+ * 1. staraj się dzielić kod na mniejsze klasy / funkcjonalności odpowiadające za jeden obszar
+ * 2. staraj się unikać współdzielonego "stanu" - to jest takich informacji, które mogą być modyfikowane z różnych
+ * miejsc w klasie - (jak np. flagi isEdit itd.) - dużo trudniej połapać się, co się dzieje w kodzie
+ */
 const express = require("express");
 const app = express();
 const fs = require("fs");
