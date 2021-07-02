@@ -4,7 +4,7 @@
 
 - [General info](#general-info)
 - [Technologies](#technologies)
-- [Running application](#running-application)
+- [Running the application](#running-the-application)
 - [Notes](#notes)
 
 ## General info
@@ -18,7 +18,7 @@ It's a simple shopping cart with add/update/remove options on client's request. 
 - Express
 - PUG
 
-## Running application
+## Running the application
 
 The application can only be run locally and it requires installed node.js package.
 
