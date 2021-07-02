@@ -25,7 +25,7 @@ The application can only be run locally and it requires installed node.js packag
 To run the app follow these steps:
 
 1. Clone the repo to your machine.
-2. Install dependecies. Type command "npm istall" (pay attention for good directory in cli).
+2. Install dependecies. Type command "npm install" (pay attention for good directory in cli).
 3. Run the application with command: "node app.js" (pay attention for good directory in cli).
 4. Open the localhost on port 3000.
 
