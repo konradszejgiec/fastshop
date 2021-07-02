@@ -4,6 +4,7 @@
 
 - [General info](#general-info)
 - [Technologies](#technologies)
+- [Running application](#running-application)
 - [Notes](#notes)
 
 ## General info
@@ -16,6 +17,17 @@ It's a simple shopping cart with add/update/remove options on client's request. 
 - Node.js
 - Express
 - PUG
+
+## Running application
+
+The application can only be run locally and it requires installed node.js package.
+
+To run the app follow these steps:
+
+1. Clone the repo to your machine.
+2. Install dependecies. Type command "npm istall" (pay attention for good directory in cli).
+3. Run the application with command: "node app.js" (pay attention for good directory in cli).
+4. Open the localhost on port 3000.
 
 ## Notes
 
