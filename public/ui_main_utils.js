@@ -1,56 +1,50 @@
 "use strict";
 
-class MainUtils {
-  constructor() {}
+const handleEventListener = (elementSelector, eventListener, callback) => {
+  return getElementBy(elementSelector).addEventListener(eventListener, callback);
+};
 
-  static handleEventListener(elementSelector, eventListener, callback) {
-    return BasicUtils.getElementBy(elementSelector).addEventListener(eventListener, callback);
-  }
+const handleActionOfButton = (button, cart, targetItem) => {
+  if (button == ".update-btn") editItem(cart, targetItem);
+  if (button == ".delete-btn") deleteItem(cart, targetItem);
+  if (button == ".clear-btn") cart.itemMap.clear();
+  renderCart("#", cart.itemMap);
+  removeButtons();
+};
 
-  static handleActionOfButton(button, cart, targetItem) {
-    if (button == ".update-btn") BasicUtils.editItem(cart, targetItem);
-    if (button == ".delete-btn") BasicUtils.deleteItem(cart, targetItem);
-    if (button == ".clear-btn") cart.itemMap.clear();
-    MainUtils.renderCart("#", cart.itemMap);
-    BasicUtils.removeButtons();
-  }
+const getUpdateItemValue = (cart, target) => {
+  const targetItem = matchTarget(cart.itemMap, target);
+  setElementValue("#item-name", targetItem.name);
+  setElementValue("#item-quantity", targetItem.quantity);
+  setElementValue("#item-price", targetItem.price);
+};
 
-  static getUpdateItemValue(cart, target) {
-    const targetItem = BasicUtils.matchTarget(cart.itemMap, target);
-    BasicUtils.setElementValue("#item-name", targetItem.name);
-    BasicUtils.setElementValue("#item-quantity", targetItem.quantity);
-    BasicUtils.setElementValue("#item-price", targetItem.price);
-  }
+const displayUpdatePanel = (buttonId) => {
+  if (document.body.contains(getElementBy(".update-btn"))) return;
+  insertItemHTML(".row", getUpdateBtn(buttonId));
+  insertItemHTML(".row", getDeleteBtn(buttonId));
+};
 
-  static displayUpdatePanel(buttonId) {
-    if (document.body.contains(BasicUtils.getElementBy(".update-btn"))) return;
-    BasicUtils.insertItemHTML(".row", BasicUtils.getUpdateBtn(buttonId));
-    BasicUtils.insertItemHTML(".row", BasicUtils.getDeleteBtn(buttonId));
-  }
+const hideUpdatePanel = () => {
+  resetInputValue();
+  removeButtons();
+};
 
-  static hideUpdatePanel() {
-    BasicUtils.resetInputValue();
-    BasicUtils.removeButtons();
-  }
+const renderCart = (route, cartItemMap) => {
+  resetView();
+  if (cartItemMap == undefined) {
+    setInnerText(".total-price", 0);
+    return;
+  } else setInnerText(".total-price", ShoppingCart.priceSum(cartItemMap));
 
-  static renderCart(route, cartItemMap) {
-    BasicUtils.resetView();
-    if (cartItemMap == undefined) {
-      BasicUtils.setInnerText(".total-price", 0);
-      return;
-    } else BasicUtils.setInnerText(".total-price", ShoppingCart.priceSum(cartItemMap));
+  cartItemMap.forEach((item) => insertItemHTML(".collection", getItemHTML(route || `/shoppingcart/items/${item.name}`, item)));
+};
 
-    cartItemMap.forEach((item) =>
-      BasicUtils.insertItemHTML(".collection", BasicUtils.getItemHTML(route || `/shoppingcart/items/${item.name}`, item))
-    );
-  }
+const refreshButtonId = (newId) => {
+  getElementBy(".update-btn").dataset.id = newId;
+  getElementBy(".delete-btn").dataset.id = newId;
+};
 
-  static refreshButtonId(newId) {
-    BasicUtils.getElementBy(".update-btn").dataset.id = newId;
-    BasicUtils.getElementBy(".delete-btn").dataset.id = newId;
-  }
-
-  static containsButton(button) {
-    return document.body.contains(BasicUtils.getElementBy(button));
-  }
-}
+const containsButton = (button) => {
+  return document.body.contains(getElementBy(button));
+};

@@ -1,99 +1,97 @@
-class BasicUtils {
-  constructor() {}
+"use strict";
 
-  static getElementBy(elementSelector) {
-    return document.querySelector(elementSelector);
-  }
+const getElementBy = (elementSelector) => {
+  return document.querySelector(elementSelector);
+};
 
-  static getElementValue(elementSelector) {
-    return BasicUtils.getElementBy(elementSelector).value;
-  }
+const getElementValue = (elementSelector) => {
+  return getElementBy(elementSelector).value;
+};
 
-  static setElementValue(selector, newValue) {
-    return (BasicUtils.getElementBy(selector).value = newValue);
-  }
+const setElementValue = (selector, newValue) => {
+  return (getElementBy(selector).value = newValue);
+};
 
-  static getButtonHTML(label, buttonId, dataAtrribute, buttonClass, colour) {
-    return `<button id="${buttonId}" data-id="${dataAtrribute}" class="${buttonClass} btn ${colour}">
+const getButtonHTML = (label, buttonId, dataAtrribute, buttonClass, colour) => {
+  return `<button id="${buttonId}" data-id="${dataAtrribute}" class="${buttonClass} btn ${colour}">
         <i class="fa fa-pencil-square-o"></i> ${label} Item
       </button>`;
-  }
+};
 
-  static insertItemHTML(existingElementSelector, newElementHtml) {
-    return BasicUtils.getElementBy(existingElementSelector).insertAdjacentHTML("beforeend", newElementHtml);
-  }
+const insertItemHTML = (existingElementSelector, newElementHtml) => {
+  return getElementBy(existingElementSelector).insertAdjacentHTML("beforeend", newElementHtml);
+};
 
-  static getUpdateBtn(id) {
-    return BasicUtils.getButtonHTML("update", "update-btn", id, "update-btn", "orange");
-  }
+const getUpdateBtn = (id) => {
+  return getButtonHTML("update", "update-btn", id, "update-btn", "orange");
+};
 
-  static getDeleteBtn(id) {
-    return BasicUtils.getButtonHTML("delete", "delete-btn", id, "delete-btn", "red");
-  }
+const getDeleteBtn = (id) => {
+  return getButtonHTML("delete", "delete-btn", id, "delete-btn", "red");
+};
 
-  static getItemHTML(route, item) {
-    return `<li class="collection-item" id="${item.name}">
+const getItemHTML = (route, item) => {
+  return `<li class="collection-item" id="${item.name}">
               <strong>Item: </strong>${item.name} || <strong>Quantity: </strong>${item.quantity} || <strong>Price: </strong>${item.price} $
               <a href="${route}" class="secondary-content">
               <i class="fa fa-pencil edit"></i>
               </a>
               </li>`;
-  }
+};
 
-  static setInnerText(selector, newText) {
-    return (BasicUtils.getElementBy(selector).innerText = newText);
-  }
+const setInnerText = (selector, newText) => {
+  return (getElementBy(selector).innerText = newText);
+};
 
-  static removeElementBy(selector) {
-    return BasicUtils.getElementBy(selector).remove();
-  }
+const removeElementBy = (selector) => {
+  return getElementBy(selector).remove();
+};
 
-  static removeButtons() {
-    if (BasicUtils.getElementBy(".update-btn") == null) return;
-    BasicUtils.removeElementBy(".update-btn");
-    BasicUtils.removeElementBy(".delete-btn");
-  }
+const removeButtons = () => {
+  if (getElementBy(".update-btn") == null) return;
+  removeElementBy(".update-btn");
+  removeElementBy(".delete-btn");
+};
 
-  static resetView() {
-    BasicUtils.resetInputValue();
-    document.querySelectorAll(".collection-item").forEach((item) => item.remove());
-  }
+const resetView = () => {
+  resetInputValue();
+  document.querySelectorAll(".collection-item").forEach((item) => item.remove());
+};
 
-  static notFilledInput() {
-    return BasicUtils.getElementValue("#item-name") == ""
-      ? true
-      : BasicUtils.getElementValue("#item-quantity") == ""
-      ? true
-      : BasicUtils.getElementValue("#item-price") == ""
-      ? true
-      : false;
-  }
+const notFilledInput = () => {
+  return getElementValue("#item-name") == ""
+    ? true
+    : getElementValue("#item-quantity") == ""
+    ? true
+    : getElementValue("#item-price") == ""
+    ? true
+    : false;
+};
 
-  static resetInputValue() {
-    if (BasicUtils.getElementBy(".row") == undefined) return;
-    BasicUtils.setElementValue("#item-name", "");
-    BasicUtils.setElementValue("#item-quantity", "");
-    BasicUtils.setElementValue("#item-price", "");
-  }
+const resetInputValue = () => {
+  if (getElementBy(".row") == undefined) return;
+  setElementValue("#item-name", "");
+  setElementValue("#item-quantity", "");
+  setElementValue("#item-price", "");
+};
 
-  static matchTarget(itemMap, targetItem) {
-    return itemMap.get(targetItem);
-  }
+const matchTarget = (itemMap, targetItem) => {
+  return itemMap.get(targetItem);
+};
 
-  static editItem(cart, targetItem) {
-    if (BasicUtils.getElementBy(".update-btn") == null) return;
+const editItem = (cart, targetItem) => {
+  if (getElementBy(".update-btn") == null) return;
 
-    const updatedItem = ShoppingCart.createNewCartItem();
+  const updatedItem = ShoppingCart.createNewCartItem();
 
-    BasicUtils.deleteItem(cart, targetItem);
-    cart.itemMap.set(targetItem, updatedItem);
-  }
+  deleteItem(cart, targetItem);
+  cart.itemMap.set(targetItem, updatedItem);
+};
 
-  static deleteItem(cart, targetItem) {
-    return cart.itemMap.delete(targetItem);
-  }
+const deleteItem = (cart, targetItem) => {
+  return cart.itemMap.delete(targetItem);
+};
 
-  static objectToMap(object) {
-    return new Map(Object.entries(object));
-  }
-}
+const arrayToMap = (array) => {
+  return new Map(array.map((item) => [item.name, item]));
+};

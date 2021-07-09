@@ -1,32 +1,28 @@
 "use strict";
 
-class ItemSpecification {
-  constructor() {
-    this.shoppingCart = new ShoppingCart();
-    CartServiceClient.fetchShoppingCart((items) => {
-      this.shoppingCart.itemMap = BasicUtils.objectToMap(items);
-      this.shoppingCart.itemMap = this.getNotBougthItems();
-    });
-    MainUtils.handleEventListener(".buy-btn", "click", () => {
-      CartServiceClient.sendCartItems(this.getRoute(), this.shoppingCart.itemMap);
-    });
-  }
+(function showItemSpecification() {
+  const shoppingCart = new ShoppingCart();
+  fetchShoppingCart("/shoppingcart/items.json", (items) => {
+    shoppingCart.itemMap = arrayToMap(items);
+    shoppingCart.itemMap = getNotBougthItems();
+  });
+  handleEventListener(".buy-btn", "click", () => {
+    sendCartItems(getRoute(), shoppingCart.itemMap);
+  });
 
-  getNotBougthItems() {
+  function getNotBougthItems() {
     let notBougthItems = new Map();
-    this.shoppingCart.itemMap.forEach((item) => {
-      if (BasicUtils.getElementBy(".collection-item").id != item.name) notBougthItems.set(item.name, item);
+    shoppingCart.itemMap.forEach((item) => {
+      if (getElementBy(".collection-item").id != item.name) notBougthItems.set(item.name, item);
     });
     return notBougthItems;
   }
 
-  getRoute() {
+  function getRoute() {
     let bougthItem = new Map();
-    this.shoppingCart.itemMap.forEach((item) => {
-      if (BasicUtils.getElementBy(".collection-item").id == item.name) bougthItem.set(item.name, item);
+    shoppingCart.itemMap.forEach((item) => {
+      if (getElementBy(".collection-item").id == item.name) bougthItem.set(item.name, item);
     });
     return `/shoppingcart/items/${bougthItem.keys()}`;
   }
-}
-
-const newItemSpecification = new ItemSpecification();
+})();

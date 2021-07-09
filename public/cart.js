@@ -6,7 +6,7 @@ class ShoppingCart {
   }
 
   addNewItem(item) {
-    if (BasicUtils.notFilledInput()) {
+    if (notFilledInput()) {
       alert("Please fill all empty fields!");
       return;
     } else this.itemMap.set(item.name, item);
@@ -21,10 +21,6 @@ class ShoppingCart {
   }
 
   static createNewCartItem() {
-    return new ShopItem(
-      BasicUtils.getElementValue("#item-name"),
-      BasicUtils.getElementValue("#item-quantity"),
-      BasicUtils.getElementValue("#item-price")
-    );
+    return new ShopItem(getElementValue("#item-name"), getElementValue("#item-quantity"), getElementValue("#item-price"));
   }
 }
