@@ -34,15 +34,16 @@ body
                             input(type="text" placeholder="Item" id="item-name") 
                             label(for="item-name")
                         div.input-field.col.s2    
-                            input(type="number" placeholder="Price" id="item-quantity") 
+                            input(type="number" placeholder="Price" id="item-price" readonly) 
                             label(for="item-quantity")
                         div.input-field.col.s3    
-                            input(type="number" placeholder="Quantity" id="item-price") 
+                            input(type="number" placeholder="Quantity" id="item-quantity") 
                             label(for="item-price")
                         button.add-btn.btn.blue.darken-3 Add Item
                             i.fa.fa-plus 
                         button.back-btn.btn.grey.pull-right.lighten-1 Back
                             i.fa.fa-chevron-circle-left
+                    ul.item-search    
         h3.center-align 
             | Total Price: 
             span.total-price 0

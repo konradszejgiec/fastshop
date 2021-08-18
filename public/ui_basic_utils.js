@@ -12,8 +12,8 @@ const setElementValue = (selector, newValue) => {
   return (getElementBy(selector).value = newValue);
 };
 
-const getButtonHTML = (label, buttonId, dataAtrribute, buttonClass, colour) => {
-  return `<button id="${buttonId}" data-id="${dataAtrribute}" class="${buttonClass} btn ${colour}">
+const getButtonHTML = (label, buttonId, dataAtrributeId, databaseId, buttonClass, colour) => {
+  return `<button id="${buttonId}" data-id="${dataAtrributeId}" data-database-id="${databaseId}" class="${buttonClass} btn ${colour}">
         <i class="fa fa-pencil-square-o"></i> ${label} Item
       </button>`;
 };
@@ -22,21 +22,31 @@ const insertItemHTML = (existingElementSelector, newElementHtml) => {
   return getElementBy(existingElementSelector).insertAdjacentHTML("beforeend", newElementHtml);
 };
 
-const getUpdateBtn = (id) => {
-  return getButtonHTML("update", "update-btn", id, "update-btn", "orange");
+const getUpdateBtn = (id, databaseId) => {
+  return getButtonHTML("update", "update-btn", id, databaseId, "update-btn", "orange");
 };
 
-const getDeleteBtn = (id) => {
-  return getButtonHTML("delete", "delete-btn", id, "delete-btn", "red");
+const getDeleteBtn = (id, databaseId) => {
+  return getButtonHTML("delete", "delete-btn", id, databaseId, "delete-btn", "red");
 };
 
 const getItemHTML = (route, item) => {
-  return `<li class="collection-item" id="${item.name}">
+  return `<li class="collection-item" id="${item.name}" data-id="${item._id}">
               <strong>Item: </strong>${item.name} || <strong>Quantity: </strong>${item.quantity} || <strong>Price: </strong>${item.price} $
               <a href="${route}" class="secondary-content">
               <i class="fa fa-pencil edit"></i>
               </a>
               </li>`;
+};
+
+const getSearchedItemsHTML = (item) => {
+  return insertItemHTML(
+    ".item-search",
+    `
+  <li class="searching-item" id="${item.name}">
+    <a href="#">${item.name}</a>
+  </li>`
+  );
 };
 
 const setInnerText = (selector, newText) => {
@@ -56,6 +66,7 @@ const removeButtons = () => {
 const resetView = () => {
   resetInputValue();
   document.querySelectorAll(".collection-item").forEach((item) => item.remove());
+  document.querySelectorAll(".searching-item").forEach((item) => item.remove());
 };
 
 const notFilledInput = () => {

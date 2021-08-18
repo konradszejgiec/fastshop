@@ -10,6 +10,35 @@ const sendCartItems = (route, cartItems) => {
   });
 };
 
+const updateCartItem = (route, id, item) => {
+  return fetch(`${route}`, {
+    method: "PATCH",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ id: id, item: item }),
+  });
+};
+
+const deleteCartItem = (route, id) => {
+  return fetch(`${route}`, {
+    method: "DELETE",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ id: id }),
+  });
+};
+
+const clearCart = (route) => {
+  return fetch(`${route}`, {
+    method: "DELETE",
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
+};
+
 const fetchShoppingCart = (route, callback) => {
   fetch(`${route}`, {
     method: "GET",

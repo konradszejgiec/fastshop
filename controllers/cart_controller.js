@@ -1,6 +1,5 @@
 "use strict";
 
-const fs = require("fs");
 const Cart = require("../models/database");
 const cartControllerUtils = require("./cart_controllers_utils");
 
@@ -22,8 +21,8 @@ exports.displayShoppingCartContent = async (req, res) => {
   try {
     const cart = await Cart.find();
     res.status(200).render("shoppingcart", {
-      route: cartControllerUtils.getShoppingCartContentRoute(cart),
-      message: cartControllerUtils.getShoppingCartContentMessage(cart),
+      route: await cartControllerUtils.getShoppingCartContentRoute(Cart),
+      message: await cartControllerUtils.getShoppingCartContentMessage(Cart),
     });
   } catch (err) {
     res.status(404).end();
@@ -48,15 +47,48 @@ exports.displaySingleItemContent = async (req, res) => {
 };
 
 exports.displayCheckoutContent = async (req, res) => {
-  res.render("checkout", { message: cartControllerUtils.getCheckoutContentMessage(data) });
+  res.render("checkout", { message: await cartControllerUtils.getCheckoutContentMessage(Cart) });
 };
 
 exports.postClientData = async (req, res) => {
   try {
     const newCart = await Cart.create(req.body);
-    res.status(201).end();
+    res.status(200).end();
   } catch (err) {
-    res.status(500).end();
+    res.status(404).end();
+    console.log(err);
+  }
+};
+
+exports.updateItem = async (req, res) => {
+  try {
+    const updatedItem = await Cart.findByIdAndUpdate(req.body.id, req.body.item, {
+      new: true,
+      runValidators: true,
+    });
+    res.status(200).end();
+  } catch (err) {
+    res.status(404).end();
+    console.log(err);
+  }
+};
+
+exports.deleteItem = async (req, res) => {
+  try {
+    await Cart.findByIdAndDelete(req.body.id);
+    res.status(200).end();
+  } catch (err) {
+    res.status(404).end();
+    console.log(err);
+  }
+};
+
+exports.clearCart = async (req, res) => {
+  try {
+    await Cart.deleteMany((err) => console.log("Collection removed succesfully"));
+    res.status(200).end();
+  } catch (err) {
+    res.status(404).end();
     console.log(err);
   }
 };

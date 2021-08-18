@@ -7,6 +7,6 @@
     renderCart(null, arrayToMap(items));
   });
   handleEventListener(".proceed-btn", "click", () => {
-    sendCartItems("/shoppingcart/checkout", []);
+    clearCart("/shoppingcart/checkout");
   });
 })();
