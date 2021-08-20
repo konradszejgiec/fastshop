@@ -19,12 +19,12 @@ class UI {
     handleEventListener(".back-btn", "click", hideUpdatePanel);
     handleEventListener(".shoppingcart-show-btn", "click", UI.showShoppingCart.bind(this));
     handleEventListener(".collection", "click", this.getItemContent.bind(this));
-    handleEventListener("#item-name", "input", this.useSearchEngine.bind(this));
+    handleEventListener("#item-name", "input", this.handleSearchEngine.bind(this));
   }
 
   createNewItem(e) {
     e.preventDefault();
-    const newItem = ShoppingCart.createNewCartItem();
+    checkingSearchEngineInput(this.shopItems);
     this.shoppingCart.addNewItem(newItem);
     renderCart("#", this.shoppingCart.itemMap);
     sendCartItems("/shoppingcart", newItem);
@@ -43,9 +43,9 @@ class UI {
     if (!containsElement(".update-btn")) return;
     handleEventListener(".update-btn", "click", (e) => {
       e.preventDefault();
-      const newItem = ShoppingCart.createNewCartItem();
+      checkingSearchEngineInput(this.shopItems, ShoppingCart.createNewCartItem());
       handleActionOfButton(".update-btn", this.shoppingCart, e.target.dataset.id);
-      updateCartItem("/shoppingcart", e.target.dataset.databaseId, newItem);
+      updateCartItem("/shoppingcart", e.target.dataset.databaseId, checkingFullfilItem(ShoppingCart.createNewCartItem()));
     });
   }
 
@@ -63,7 +63,7 @@ class UI {
     clearCart("/clear");
   }
 
-  useSearchEngine(e) {
+  handleSearchEngine(e) {
     clearSearchEngine();
     searchForItem(this.shopItems, e.target.value);
     handleEventListener(".item-search", "click", (e) => {

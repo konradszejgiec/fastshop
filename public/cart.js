@@ -6,10 +6,8 @@ class ShoppingCart {
   }
 
   addNewItem(item) {
-    if (notFilledInput()) {
-      alert("Please fill all empty fields!");
-      return;
-    } else this.itemMap.set(item.name, item);
+    if (notFilledInput()) return;
+    else this.itemMap.set(item.name, item);
   }
 
   static priceSum(items) {

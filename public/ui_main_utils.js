@@ -92,3 +92,19 @@ const getSearchingItem = (items, searchedItem) => {
 
   getElementBy(".item-search").textContent = "";
 };
+
+const checkingSearchEngineInput = (items, item) => {
+  if (!items.map((item) => item.name).includes(getElementValue("#item-name"))) {
+    alert("Sorry, we do not have what are you looking for. Please choose something from our list.");
+    resetInputValue();
+    return;
+  }
+  checkingFullfilItem(item);
+};
+
+const checkingFullfilItem = (item) => {
+  if (Object.values(item).includes("")) {
+    alert("Please fill all empty fields!");
+    return;
+  } else return ShoppingCart.createNewCartItem();
+};
