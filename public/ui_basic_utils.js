@@ -69,6 +69,11 @@ const resetView = () => {
   document.querySelectorAll(".searching-item").forEach((item) => item.remove());
 };
 
+const hideUpdatePanel = () => {
+  resetInputValue();
+  removeButtons();
+};
+
 const notFilledInput = () => {
   return getElementValue("#item-name") == ""
     ? true
@@ -90,10 +95,10 @@ const matchTarget = (itemMap, targetItem) => {
   return itemMap.get(targetItem);
 };
 
-const editItem = (cart, targetItem) => {
+const editItem = (cart, targetItem, event) => {
   if (getElementBy(".update-btn") == null) return;
 
-  const updatedItem = ShoppingCart.createNewCartItem();
+  const updatedItem = ShoppingCart.createNewCartItem(event);
 
   deleteItem(cart, targetItem);
   cart.itemMap.set(targetItem, updatedItem);
@@ -105,4 +110,20 @@ const deleteItem = (cart, targetItem) => {
 
 const arrayToMap = (array) => {
   return new Map(array.map((item) => [item.name, item]));
+};
+
+const containsElement = (element) => {
+  return document.body.contains(getElementBy(element));
+};
+
+const containsAnInvalidValue = (item) => {
+  return Object.values(item).includes("");
+};
+
+const clearStockList = () => {
+  return (getElementBy(".item-search").textContent = "");
+};
+
+const refreshCart = () => {
+  return window.location.reload();
 };

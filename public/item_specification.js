@@ -6,7 +6,7 @@
     shoppingCart.itemMap = arrayToMap(items);
   });
   handleEventListener(".buy-btn", "click", () => {
-    deleteCartItem(getRoute(shoppingCart), getItemId(shoppingCart));
+    deleteCartItem(getRoute(shoppingCart), getItemId(shoppingCart), true);
   });
 
   function getRoute(cartItem) {

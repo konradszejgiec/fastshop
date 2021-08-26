@@ -4,30 +4,39 @@ class UI {
   constructor() {
     this.shoppingCart = new ShoppingCart();
     this.createElement();
-    this.shopItems = [
+    this.stockList = [
       { name: "soup", price: "10" },
       { name: "chips", price: "15" },
       { name: "burger", price: "20" },
       { name: "burrito", price: "25" },
       { name: "potato", price: "2" },
+      { name: "water", price: "1" },
+      { name: "juice", price: "5" },
+      { name: "cheese", price: "3" },
+      { name: "fish", price: "50" },
+      { name: "steak", price: "75" },
+      { name: "carrot", price: "2.5" },
+      { name: "nuggets", price: "17.5" },
     ];
   }
 
   createElement() {
+    window.addEventListener("load", UI.showShoppingCart.bind(this));
     handleEventListener(".add-btn", "click", this.createNewItem.bind(this));
     handleEventListener(".clear-btn", "click", this.clearShoppingList.bind(this));
     handleEventListener(".back-btn", "click", hideUpdatePanel);
-    handleEventListener(".shoppingcart-show-btn", "click", UI.showShoppingCart.bind(this));
     handleEventListener(".collection", "click", this.getItemContent.bind(this));
-    handleEventListener("#item-name", "input", this.handleSearchEngine.bind(this));
+    handleMultipleTypesOfEventListeners("#item-name", "input", "click", this.handleSearchEngine.bind(this));
   }
 
   createNewItem(e) {
     e.preventDefault();
-    checkingSearchEngineInput(this.shopItems);
+    const newItem = ShoppingCart.createNewCartItem(e);
+    checkingSearchEngineInput(this.stockList, newItem, this.shoppingCart, e);
     this.shoppingCart.addNewItem(newItem);
     renderCart("#", this.shoppingCart.itemMap);
-    sendCartItems("/shoppingcart", newItem);
+    sendCartItems("/shoppingcart", checkingFullfilItem(newItem));
+    refreshCart();
   }
 
   getItemContent(e) {
@@ -37,15 +46,19 @@ class UI {
     refreshButtonId(e.target.parentElement.parentElement.id, e.target.parentElement.parentElement.dataset.id);
     this.updateItem();
     this.deleteItem();
+    clearStockList();
   }
 
   updateItem() {
     if (!containsElement(".update-btn")) return;
     handleEventListener(".update-btn", "click", (e) => {
       e.preventDefault();
-      checkingSearchEngineInput(this.shopItems, ShoppingCart.createNewCartItem());
-      handleActionOfButton(".update-btn", this.shoppingCart, e.target.dataset.id);
-      updateCartItem("/shoppingcart", e.target.dataset.databaseId, checkingFullfilItem(ShoppingCart.createNewCartItem()));
+      const updatedItem = ShoppingCart.createNewCartItem(e);
+      checkingSearchEngineInput(this.stockList, updatedItem, false, e);
+      handleActionOfButton(".update-btn", this.shoppingCart, e, updatedItem);
+      updateCartItem("/shoppingcart", e.target.dataset.databaseId, checkingFullfilItem(updatedItem));
+      clearStockList();
+      refreshCart();
     });
   }
 
@@ -53,8 +66,12 @@ class UI {
     if (!containsElement(".delete-btn")) return;
     handleEventListener(".delete-btn", "click", (e) => {
       e.preventDefault();
-      handleActionOfButton(".delete-btn", this.shoppingCart, e.target.dataset.id);
-      deleteCartItem("/shoppingcart", e.target.dataset.databaseId);
+      const deletedItem = ShoppingCart.createNewCartItem(e);
+      checkingSearchEngineInput(this.stockList, deletedItem, false, e);
+      handleActionOfButton(".delete-btn", this.shoppingCart, e, deletedItem);
+      deleteCartItem("/shoppingcart", e.target.dataset.databaseId, checkingFullfilItem(deletedItem));
+      clearStockList();
+      refreshCart();
     });
   }
 
@@ -65,14 +82,13 @@ class UI {
 
   handleSearchEngine(e) {
     clearSearchEngine();
-    searchForItem(this.shopItems, e.target.value);
+    searchForItem(this.stockList, e.target.value);
     handleEventListener(".item-search", "click", (e) => {
-      getSearchingItem(this.shopItems, e.target.parentElement.id);
+      getSearchingItem(this.stockList, e.target.parentElement.id);
     });
   }
 
-  static showShoppingCart(e) {
-    e.preventDefault();
+  static showShoppingCart() {
     fetchShoppingCart("/show", (items) => {
       this.shoppingCart.itemMap = arrayToMap(items);
       renderCart("#", items);

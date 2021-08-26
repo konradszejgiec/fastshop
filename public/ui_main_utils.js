@@ -4,10 +4,16 @@ const handleEventListener = (elementSelector, eventListener, callback) => {
   return getElementBy(elementSelector).addEventListener(eventListener, callback);
 };
 
-const handleActionOfButton = (button, cart, targetItem) => {
-  if (button == ".update-btn") editItem(cart, targetItem);
-  if (button == ".delete-btn") deleteItem(cart, targetItem);
-  if (button == ".clear-btn") cart.itemMap.clear();
+const handleActionOfButton = (button, cart, event, item) => {
+  if (!item) {
+    if (button == ".clear-btn") cart.itemMap.clear();
+  } else if (containsAnInvalidValue(item)) {
+    resetInputValue();
+    removeButtons();
+    return;
+  }
+  if (button == ".update-btn") editItem(cart, event.target.dataset.id, event);
+  if (button == ".delete-btn") deleteItem(cart, event.target.dataset.id);
   renderCart("#", cart.itemMap);
   removeButtons();
 };
@@ -25,19 +31,20 @@ const displayUpdatePanel = (buttonId, databaseId) => {
   insertItemHTML(".row", getDeleteBtn(buttonId, databaseId));
 };
 
-const hideUpdatePanel = () => {
-  resetInputValue();
-  removeButtons();
-};
-
 const renderCart = (route, cartItemMap) => {
   resetView();
+  hideUpdatePanel();
   if (cartItemMap == undefined) {
     setInnerText(".total-price", 0);
     return;
   } else setInnerText(".total-price", ShoppingCart.priceSum(cartItemMap));
 
-  cartItemMap.forEach((item) => insertItemHTML(".collection", getItemHTML(route || `/shoppingcart/items/${item._id}`, item)));
+  cartItemMap.forEach((item) => {
+    if (containsAnInvalidValue(item)) {
+      resetInputValue();
+      return;
+    } else insertItemHTML(".collection", getItemHTML(route || `/shoppingcart/items/${item._id}`, item));
+  });
 };
 
 const refreshButtonId = (newId, newDatabaseId) => {
@@ -45,10 +52,6 @@ const refreshButtonId = (newId, newDatabaseId) => {
   getElementBy(".update-btn").dataset.databaseId = newDatabaseId;
   getElementBy(".delete-btn").dataset.id = newId;
   getElementBy(".delete-btn").dataset.databaseId = newDatabaseId;
-};
-
-const containsElement = (element) => {
-  return document.body.contains(getElementBy(element));
 };
 
 const getItemId = (cart) => {
@@ -66,7 +69,7 @@ const clearSearchEngine = () => {
     setElementValue("#item-price", "");
     setElementValue("#item-quantity", "");
   }
-  getElementBy(".item-search").textContent = "";
+  clearStockList();
 };
 
 const searchForItem = (items, input) => {
@@ -77,34 +80,49 @@ const searchForItem = (items, input) => {
         getSearchedItemsHTML(item);
         if (getElementValue("#item-name") != item.name) {
           setElementValue("#item-price", "");
+          setElementValue("#item-quantity", "");
         }
       }
     });
 };
 
 const getSearchingItem = (items, searchedItem) => {
+  if (!searchedItem) return;
   items.map((item) => {
     if (searchedItem == item.name) {
       setElementValue("#item-name", item.name);
       setElementValue("#item-price", item.price);
     }
   });
-
   getElementBy(".item-search").textContent = "";
 };
 
-const checkingSearchEngineInput = (items, item) => {
+const checkingSearchEngineInput = (items, item, cart, event) => {
   if (!items.map((item) => item.name).includes(getElementValue("#item-name"))) {
-    alert("Sorry, we do not have what are you looking for. Please choose something from our list.");
+    event.stopImmediatePropagation();
     resetInputValue();
-    return;
+    return alert("Sorry, we do not have what are you looking for. Please choose something from our list.");
   }
   checkingFullfilItem(item);
+  if (!cart) return;
+  checkingCartSize(cart);
 };
 
 const checkingFullfilItem = (item) => {
-  if (Object.values(item).includes("")) {
-    alert("Please fill all empty fields!");
+  if (containsAnInvalidValue(item)) {
+    return alert("Please fill all empty fields!");
+  } else return item;
+};
+
+const checkingCartSize = (cart) => {
+  if (cart.itemMap.size == 10) {
+    alert("Cannot add new item. Please clear cart or delete item.");
+    resetInputValue();
     return;
-  } else return ShoppingCart.createNewCartItem();
+  }
+};
+
+const handleMultipleTypesOfEventListeners = (selector, eventTypeOne, eventTypeSec, fn) => {
+  handleEventListener(selector, eventTypeOne, fn);
+  handleEventListener(selector, eventTypeSec, fn);
 };

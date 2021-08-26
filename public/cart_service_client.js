@@ -1,16 +1,18 @@
 "use strict";
 
-const sendCartItems = (route, cartItems) => {
+const sendCartItems = (route, item) => {
+  if (!item) return;
   return fetch(`${route}`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
     },
-    body: JSON.stringify(cartItems),
+    body: JSON.stringify(item),
   });
 };
 
 const updateCartItem = (route, id, item) => {
+  if (!item) return;
   return fetch(`${route}`, {
     method: "PATCH",
     headers: {
@@ -20,7 +22,8 @@ const updateCartItem = (route, id, item) => {
   });
 };
 
-const deleteCartItem = (route, id) => {
+const deleteCartItem = (route, id, item) => {
+  if (!item) return;
   return fetch(`${route}`, {
     method: "DELETE",
     headers: {

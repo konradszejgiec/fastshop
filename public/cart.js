@@ -18,7 +18,8 @@ class ShoppingCart {
     return total;
   }
 
-  static createNewCartItem() {
+  static createNewCartItem(event) {
+    event.stopImmediatePropagation();
     return new ShopItem(getElementValue("#item-name"), getElementValue("#item-quantity"), getElementValue("#item-price"));
   }
 }
