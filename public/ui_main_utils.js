@@ -4,7 +4,7 @@ const handleEventListener = (elementSelector, eventListener, callback) => {
   return getElementBy(elementSelector).addEventListener(eventListener, callback);
 };
 
-const handleActionOfButton = (button, cart, event, item) => {
+const handleButtonAction = (button, cart, event, item) => {
   if (!item) {
     if (button == ".clear-btn") cart.itemMap.clear();
   } else if (containsAnInvalidValue(item)) {
@@ -29,6 +29,7 @@ const displayUpdatePanel = (buttonId, databaseId) => {
   if (document.body.contains(getElementBy(".update-btn"))) return;
   insertItemHTML(".row", getUpdateBtn(buttonId, databaseId));
   insertItemHTML(".row", getDeleteBtn(buttonId, databaseId));
+  removeElementBy(".add-btn");
 };
 
 const renderCart = (route, cartItemMap) => {
@@ -97,32 +98,31 @@ const getSearchingItem = (items, searchedItem) => {
   getElementBy(".item-search").textContent = "";
 };
 
-const checkingSearchEngineInput = (items, item, cart, event) => {
+const checkingSearchEngineInput = (items, item, event) => {
   if (!items.map((item) => item.name).includes(getElementValue("#item-name"))) {
     event.stopImmediatePropagation();
     resetInputValue();
     return alert("Sorry, we do not have what are you looking for. Please choose something from our list.");
   }
-  checkingFullfilItem(item);
-  if (!cart) return;
-  checkingCartSize(cart);
+  checkingDataCompleteness(item);
 };
 
-const checkingFullfilItem = (item) => {
+const checkingDataCompleteness = (item) => {
   if (containsAnInvalidValue(item)) {
     return alert("Please fill all empty fields!");
   } else return item;
 };
 
-const checkingCartSize = (cart) => {
-  if (cart.itemMap.size == 10) {
+const exceedingCartLimit = (cart, event) => {
+  if (cart.itemMap.size >= 10) {
+    event.stopImmediatePropagation();
     alert("Cannot add new item. Please clear cart or delete item.");
     resetInputValue();
-    return;
+    return true;
   }
 };
 
-const handleMultipleTypesOfEventListeners = (selector, eventTypeOne, eventTypeSec, fn) => {
+const handleEventListenerTypes = (selector, eventTypeOne, eventTypeSec, fn) => {
   handleEventListener(selector, eventTypeOne, fn);
   handleEventListener(selector, eventTypeSec, fn);
 };

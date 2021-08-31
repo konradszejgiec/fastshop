@@ -4,38 +4,26 @@ class UI {
   constructor() {
     this.shoppingCart = new ShoppingCart();
     this.createElement();
-    this.stockList = [
-      { name: "soup", price: "10" },
-      { name: "chips", price: "15" },
-      { name: "burger", price: "20" },
-      { name: "burrito", price: "25" },
-      { name: "potato", price: "2" },
-      { name: "water", price: "1" },
-      { name: "juice", price: "5" },
-      { name: "cheese", price: "3" },
-      { name: "fish", price: "50" },
-      { name: "steak", price: "75" },
-      { name: "carrot", price: "2.5" },
-      { name: "nuggets", price: "17.5" },
-    ];
   }
 
   createElement() {
     window.addEventListener("load", UI.showShoppingCart.bind(this));
+    window.addEventListener("load", UI.getStockList.bind(this));
     handleEventListener(".add-btn", "click", this.createNewItem.bind(this));
     handleEventListener(".clear-btn", "click", this.clearShoppingList.bind(this));
     handleEventListener(".back-btn", "click", hideUpdatePanel);
     handleEventListener(".collection", "click", this.getItemContent.bind(this));
-    handleMultipleTypesOfEventListeners("#item-name", "input", "click", this.handleSearchEngine.bind(this));
+    handleEventListenerTypes("#item-name", "input", "click", this.handleSearchEngine.bind(this));
   }
 
   createNewItem(e) {
     e.preventDefault();
     const newItem = ShoppingCart.createNewCartItem(e);
-    checkingSearchEngineInput(this.stockList, newItem, this.shoppingCart, e);
+    checkingSearchEngineInput(this.stockList, newItem, e);
+    if (exceedingCartLimit(this.shoppingCart, e)) return;
     this.shoppingCart.addNewItem(newItem);
     renderCart("#", this.shoppingCart.itemMap);
-    sendCartItems("/shoppingcart", checkingFullfilItem(newItem));
+    sendCartItems("/shoppingcart", checkingDataCompleteness(newItem));
     refreshCart();
   }
 
@@ -54,9 +42,9 @@ class UI {
     handleEventListener(".update-btn", "click", (e) => {
       e.preventDefault();
       const updatedItem = ShoppingCart.createNewCartItem(e);
-      checkingSearchEngineInput(this.stockList, updatedItem, false, e);
-      handleActionOfButton(".update-btn", this.shoppingCart, e, updatedItem);
-      updateCartItem("/shoppingcart", e.target.dataset.databaseId, checkingFullfilItem(updatedItem));
+      checkingSearchEngineInput(this.stockList, updatedItem, e);
+      handleButtonAction(".update-btn", this.shoppingCart, e, updatedItem);
+      updateCartItem("/shoppingcart", e.target.dataset.databaseId, checkingDataCompleteness(updatedItem));
       clearStockList();
       refreshCart();
     });
@@ -67,16 +55,16 @@ class UI {
     handleEventListener(".delete-btn", "click", (e) => {
       e.preventDefault();
       const deletedItem = ShoppingCart.createNewCartItem(e);
-      checkingSearchEngineInput(this.stockList, deletedItem, false, e);
-      handleActionOfButton(".delete-btn", this.shoppingCart, e, deletedItem);
-      deleteCartItem("/shoppingcart", e.target.dataset.databaseId, checkingFullfilItem(deletedItem));
+      checkingSearchEngineInput(this.stockList, deletedItem, e);
+      handleButtonAction(".delete-btn", this.shoppingCart, e, deletedItem);
+      deleteCartItem("/shoppingcart", e.target.dataset.databaseId, checkingDataCompleteness(deletedItem));
       clearStockList();
       refreshCart();
     });
   }
 
   clearShoppingList() {
-    handleActionOfButton(".clear-btn", this.shoppingCart);
+    handleButtonAction(".clear-btn", this.shoppingCart);
     clearCart("/clear");
   }
 
@@ -92,6 +80,13 @@ class UI {
     fetchShoppingCart("/show", (items) => {
       this.shoppingCart.itemMap = arrayToMap(items);
       renderCart("#", items);
+    });
+  }
+
+  static getStockList() {
+    this.stockList;
+    fetchShoppingCart("/stocklist", (items) => {
+      this.stockList = items;
     });
   }
 }

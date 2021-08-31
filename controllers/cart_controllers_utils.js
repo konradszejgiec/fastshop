@@ -10,6 +10,16 @@ const cartLength = async (data) => {
   return cartLength;
 };
 
+const getStockListDescriptionFrom = (data, searchedItem) => {
+  let itemDescription;
+  data.forEach((element) => {
+    if (element.name == searchedItem) {
+      return (itemDescription = element.description);
+    }
+  });
+  return itemDescription;
+};
+
 exports.getShoppingCartContentMessage = async (data) => {
   return (await cartLength(data)) > 0 ? "Buy Now" : "Oops, your cart is empty. Please back and add some items.";
 };
@@ -18,8 +28,8 @@ exports.getShoppingCartContentRoute = async (data) => {
   return (await cartLength(data)) > 0 ? "/shoppingcart/checkout" : "/";
 };
 
-exports.getSingleItemInfo = (req, data, message) => {
-  let item, id, price, quantity, totalItemPrice;
+exports.getSingleItemInfo = (req, data, message, stockList) => {
+  let item, id, price, quantity, totalItemPrice, description;
   items(data).forEach((element) => {
     if (req.params.id == element._id) {
       item = element.name;
@@ -27,9 +37,10 @@ exports.getSingleItemInfo = (req, data, message) => {
       id = element.id;
       quantity = element.quantity;
       totalItemPrice = Number(element.quantity) * Number(element.price);
+      description = getStockListDescriptionFrom(stockList, element.name);
     }
   });
-  return message == "item"
+  return message == "name"
     ? item
     : message == "price"
     ? price
@@ -39,6 +50,8 @@ exports.getSingleItemInfo = (req, data, message) => {
     ? quantity
     : message == "totalItemPrice"
     ? totalItemPrice
+    : message == "description"
+    ? description
     : "";
 };
 

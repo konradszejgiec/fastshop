@@ -5,6 +5,8 @@ const { deleteItem } = require("../controllers/cart_controller");
 const shoppingCart = (app, bodyParser, cartController) => {
   const jsonParser = bodyParser.json();
 
+  app.route("/stocklist").get(cartController.getStockList);
+
   app.route("/").get(cartController.displayMainPage);
 
   app.route("/show").get(cartController.renderCartItems);
@@ -22,7 +24,7 @@ const shoppingCart = (app, bodyParser, cartController) => {
     .route("/shoppingcart/items/:id")
     .get(cartController.displaySingleItemContent)
     .post(jsonParser, cartController.postClientData)
-    .delete(jsonParser, deleteItem);
+    .delete(jsonParser, cartController.deleteItem);
 
   app.route("/shoppingcart/items.json").get(cartController.renderCartItems);
 
