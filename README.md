@@ -1,5 +1,7 @@
 # Shopping Cart
 
+Link to the project: https://konrad-szejgiec-fastshop.herokuapp.com/
+
 ## Table of contents
 
 - [General info](#general-info)
@@ -21,7 +23,7 @@ It's a simple shopping cart with add/update/remove options on client's request. 
 
 ## Running the application
 
-Under construction
+https://konrad-szejgiec-fastshop.herokuapp.com/
 
 ## Notes
 
