@@ -1,6 +1,6 @@
 "use strict";
 
-const Cart = require("../models/database");
+const Cart = require("../models/cart");
 const Item = require("../models/items");
 const cartControllerUtils = require("./cart_controllers_utils");
 
