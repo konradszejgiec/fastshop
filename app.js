@@ -6,8 +6,11 @@ const shoppingCart = require("./routes/shoppingcart_routes");
 const cartController = require("./controllers/cart_controller");
 const dotenv = require("dotenv");
 dotenv.config({ path: "./config.env" });
-const port = process.env.PORT;
-const DB = process.env.DATABASE.replace("<PASSWORD>", process.env.DATABASE_PASSWORD);
+const port = process.env.PORT || 3000;
+const DB = process.env.DATABASE.replace(
+  "<PASSWORD>",
+  process.env.DATABASE_PASSWORD
+);
 mongoose
   .connect(DB, {
     useNewUrlParser: true,
