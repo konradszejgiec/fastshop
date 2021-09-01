@@ -17,9 +17,7 @@ body
                 a(href="/" class="brand-logo left") Fast Shop 
                 ul.right 
                     li
-                        a(href="./shoppingcart" class="shoppingcart-btn btn grey lighten-1") Proceed To Checkout
-                    li
-                        a(href="#" class="clear-btn btn grey lighten-1") Clear Cart                
+                        a(href="#" class="clear-btn btn grey lighten-1") Clear               
          
     br
     div.container
@@ -46,6 +44,12 @@ body
             | Total Price: 
             span.total-price 0
         ul#item-list.collection
+    br    
+    footer 
+        div.container
+            ul.right 
+                li
+                    a(href="./shoppingcart" class="shoppingcart-btn btn grey lighten-1") Proceed To Checkout          
     script(src="shop_item.js")    
     script(src="shoppingcart.js")
     script(src="cart_service_client.js") 
