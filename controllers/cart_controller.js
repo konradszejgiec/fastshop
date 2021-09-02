@@ -8,6 +8,10 @@ exports.displayMainPage = async (req, res) => {
   res.render("index");
 };
 
+exports.displayWelcomePage = async (req, res) => {
+  res.render("welcome_page");
+};
+
 exports.getStockList = async (req, res) => {
   try {
     const item = await Item.find();
@@ -104,4 +108,8 @@ exports.clearCart = async (req, res) => {
     res.status(404).end();
     console.log(err);
   }
+};
+
+exports.handleExit = async (req, res) => {
+  res.redirect("/");
 };

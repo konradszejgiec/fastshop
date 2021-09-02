@@ -1,7 +1,7 @@
 "use strict";
 
 const items = (data) => {
-  if (data == false) return;
+  if (!data) return;
   else return data;
 };
 
@@ -18,6 +18,11 @@ const getStockListDescriptionFrom = (data, searchedItem) => {
     }
   });
   return itemDescription;
+};
+
+exports.isEmptyCart = async (data) => {
+  if ((await cartLength(data)) > 0) return true;
+  else return false;
 };
 
 exports.getShoppingCartContentMessage = async (data) => {

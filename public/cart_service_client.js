@@ -1,6 +1,6 @@
 "use strict";
 
-const sendCartItems = (route, item) => {
+const sendData = (route, item) => {
   if (!item) return;
   return fetch(`${route}`, {
     method: "POST",

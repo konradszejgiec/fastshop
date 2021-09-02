@@ -10,7 +10,7 @@ class UI {
     window.addEventListener("load", UI.showShoppingCart.bind(this));
     window.addEventListener("load", UI.getStockList.bind(this));
     handleEventListener(".add-btn", "click", this.createNewItem.bind(this));
-    handleEventListener(".clear-btn", "click", this.clearShoppingList.bind(this));
+    handleEventListener(".exit-btn", "click", this.clearShoppingList.bind(this));
     handleEventListener(".back-btn", "click", hideUpdatePanel);
     handleEventListener(".collection", "click", this.getItemContent.bind(this));
     handleEventListenerTypes("#item-name", "input", "click", this.handleSearchEngine.bind(this));
@@ -23,7 +23,7 @@ class UI {
     if (exceedingCartLimit(this.shoppingCart, e)) return;
     this.shoppingCart.addNewItem(newItem);
     renderCart("#", this.shoppingCart.itemMap);
-    sendCartItems("/shoppingcart", checkingDataCompleteness(newItem));
+    sendData("/shoppingcart", checkingDataCompleteness(newItem));
     refreshCart();
   }
 
@@ -64,7 +64,8 @@ class UI {
   }
 
   clearShoppingList() {
-    handleButtonAction(".clear-btn", this.shoppingCart);
+    alert("Leaving the app will delete your cart data.");
+    handleButtonAction(".exit-btn", this.shoppingCart);
     clearCart("/clear");
   }
 

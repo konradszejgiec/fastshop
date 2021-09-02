@@ -1,13 +1,13 @@
 "use strict";
 
-const { deleteItem } = require("../controllers/cart_controller");
-
 const shoppingCart = (app, bodyParser, cartController) => {
   const jsonParser = bodyParser.json();
 
-  app.route("/stocklist").get(cartController.getStockList);
+  app.route("/").get(cartController.displayWelcomePage);
 
-  app.route("/").get(cartController.displayMainPage);
+  app.route("/main").get(cartController.displayMainPage);
+
+  app.route("/stocklist").get(cartController.getStockList);
 
   app.route("/show").get(cartController.renderCartItems);
 
@@ -30,7 +30,7 @@ const shoppingCart = (app, bodyParser, cartController) => {
 
   app.route("/shoppingcart/checkout").get(cartController.displayCheckoutContent).delete(jsonParser, cartController.clearCart);
 
-  app.route("/clear").delete(jsonParser, cartController.clearCart);
+  app.route("/clear").get(cartController.handleExit).delete(jsonParser, cartController.clearCart);
 };
 
 module.exports = shoppingCart;
