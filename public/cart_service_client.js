@@ -8,7 +8,7 @@ const sendData = (route, item) => {
       "Content-Type": "application/json",
     },
     body: JSON.stringify(item),
-  });
+  }).then((response) => location.reload());
 };
 
 const updateCartItem = (route, id, item) => {
@@ -19,7 +19,7 @@ const updateCartItem = (route, id, item) => {
       "Content-Type": "application/json",
     },
     body: JSON.stringify({ id: id, item: item }),
-  });
+  }).then((response) => location.reload());
 };
 
 const deleteCartItem = (route, id, item) => {
@@ -30,7 +30,7 @@ const deleteCartItem = (route, id, item) => {
       "Content-Type": "application/json",
     },
     body: JSON.stringify({ id: id }),
-  });
+  }).then((response) => location.reload());
 };
 
 const clearCart = (route) => {

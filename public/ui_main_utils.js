@@ -1,12 +1,15 @@
 "use strict";
 
 const handleEventListener = (elementSelector, eventListener, callback) => {
-  return getElementBy(elementSelector).addEventListener(eventListener, callback);
+  return getElementBy(elementSelector).addEventListener(
+    eventListener,
+    callback
+  );
 };
 
 const handleButtonAction = (button, cart, event, item) => {
   if (!item) {
-    if (button == ".clear-btn") cart.itemMap.clear();
+    if (button == ".exit-btn") cart.itemMap.clear();
   } else if (containsAnInvalidValue(item)) {
     resetInputValue();
     removeButtons();
@@ -27,8 +30,8 @@ const getUpdateItemValue = (cart, target) => {
 
 const displayUpdatePanel = (buttonId, databaseId) => {
   if (document.body.contains(getElementBy(".update-btn"))) return;
-  insertItemHTML(".row", getUpdateBtn(buttonId, databaseId));
-  insertItemHTML(".row", getDeleteBtn(buttonId, databaseId));
+  insertItemHTML(".input-panel", getUpdateBtn(buttonId, databaseId));
+  insertItemHTML(".input-panel", getDeleteBtn(buttonId, databaseId));
   removeElementBy(".add-btn");
 };
 
@@ -44,7 +47,11 @@ const renderCart = (route, cartItemMap) => {
     if (containsAnInvalidValue(item)) {
       resetInputValue();
       return;
-    } else insertItemHTML(".collection", getItemHTML(route || `/shoppingcart/items/${item._id}`, item));
+    } else
+      insertItemHTML(
+        ".collection",
+        getItemHTML(route || `/shoppingcart/items/${item._id}`, item)
+      );
   });
 };
 
@@ -102,7 +109,9 @@ const checkingSearchEngineInput = (items, item, event) => {
   if (!items.map((item) => item.name).includes(getElementValue("#item-name"))) {
     event.stopImmediatePropagation();
     resetInputValue();
-    return alert("Sorry, we do not have what are you looking for. Please choose something from our list.");
+    return alert(
+      "Sorry, we do not have what are you looking for. Please choose something from our list."
+    );
   }
   checkingDataCompleteness(item);
 };
