@@ -30,7 +30,7 @@ const deleteCartItem = (route, id, item) => {
       "Content-Type": "application/json",
     },
     body: JSON.stringify({ id: id }),
-  }).then((response) => location.reload());
+  });
 };
 
 const clearCart = (route) => {

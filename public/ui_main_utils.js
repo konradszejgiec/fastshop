@@ -1,15 +1,12 @@
 "use strict";
 
 const handleEventListener = (elementSelector, eventListener, callback) => {
-  return getElementBy(elementSelector).addEventListener(
-    eventListener,
-    callback
-  );
+  return getElementBy(elementSelector).addEventListener(eventListener, callback);
 };
 
 const handleButtonAction = (button, cart, event, item) => {
   if (!item) {
-    if (button == ".exit-btn") cart.itemMap.clear();
+    if (button == ".clear-btn") cart.itemMap.clear();
   } else if (containsAnInvalidValue(item)) {
     resetInputValue();
     removeButtons();
@@ -47,11 +44,7 @@ const renderCart = (route, cartItemMap) => {
     if (containsAnInvalidValue(item)) {
       resetInputValue();
       return;
-    } else
-      insertItemHTML(
-        ".collection",
-        getItemHTML(route || `/shoppingcart/items/${item._id}`, item)
-      );
+    } else insertItemHTML(".collection", getItemHTML(route || `/shoppingcart/items/${item._id}`, item));
   });
 };
 
@@ -109,23 +102,21 @@ const checkingSearchEngineInput = (items, item, event) => {
   if (!items.map((item) => item.name).includes(getElementValue("#item-name"))) {
     event.stopImmediatePropagation();
     resetInputValue();
-    return alert(
-      "Sorry, we do not have what are you looking for. Please choose something from our list."
-    );
+    return displayMessage(".not-searched");
   }
   checkingDataCompleteness(item);
 };
 
 const checkingDataCompleteness = (item) => {
   if (containsAnInvalidValue(item)) {
-    return alert("Please fill all empty fields!");
+    return displayMessage(".fill");
   } else return item;
 };
 
 const exceedingCartLimit = (cart, event) => {
   if (cart.itemMap.size >= 10) {
     event.stopImmediatePropagation();
-    alert("Cannot add new item. Please clear cart or delete item.");
+    displayMessage(".cannot-add");
     resetInputValue();
     return true;
   }
@@ -134,4 +125,41 @@ const exceedingCartLimit = (cart, event) => {
 const handleEventListenerTypes = (selector, eventTypeOne, eventTypeSec, fn) => {
   handleEventListener(selector, eventTypeOne, fn);
   handleEventListener(selector, eventTypeSec, fn);
+};
+
+const handleExitButton = () => {
+  return displayMessage(".exit");
+};
+
+const handleStayButton = (selector) => {
+  return document.querySelectorAll(".message-button").forEach((element) => {
+    let searchingElement = `.${element.className.split(" ")[element.className.split(" ").length - 1]}`;
+    if (selector == ".exit") {
+      element.addEventListener("click", () => {
+        setElementDisplayStyle(selector, "none");
+        setElementDisplayStyle(".fill", "none");
+        setElementDisplayStyle(".not-searched", "none");
+        setElementDisplayStyle(".cannot-add", "none");
+        setElementDisplayStyle(".main-content", "block");
+        setElementDisplayStyle(".footer", "block");
+      });
+    } else {
+      element.addEventListener("click", () => {
+        if (searchingElement == selector) {
+          if (getElementDisplayStyle(selector) == "block") {
+            setElementDisplayStyle(selector, "none");
+            setElementDisplayStyle(".main-content", "block");
+            setElementDisplayStyle(".footer", "block");
+          }
+        }
+      });
+    }
+  });
+};
+
+const displayMessage = (selector) => {
+  setElementDisplayStyle(selector, "block");
+  setElementDisplayStyle(".main-content", "none");
+  setElementDisplayStyle(".footer", "none");
+  handleStayButton(selector);
 };

@@ -19,18 +19,41 @@ body
                     li
                         a(href="#" class="exit-btn btn grey lighten-1") Exit App  
     br
-    div(class="row message-window" style="display:none")
+    div(class="row message-window exit" style="display:none")
         div.col.s8.offset-s2
             div.card.grey.lighten-1
                 div.card-content.white-text
                     span.card-title  Leaving the app will delete your cart data. Do you want to proceed? 
                 div.card-action    
-                    a(href="/main" class="clear-btn btn grey lighten-1") Yes
-                    a(href="/main" class="clear-btn btn grey lighten-1") No                   
+                    a(href="/clear" class="clear-btn btn grey lighten-1") Yes
+                    a(href="#" class="stay-btn btn grey lighten-1 message-button exit") No                   
                      
- 
+    div(class="row message-window not-searched" style="display:none")
+        div.col.s8.offset-s2
+            div.card.grey.lighten-1
+                div.card-content.white-text
+                    span.card-title  Sorry, we do not have what are you looking for. Please choose something from our list. 
+                div.card-action    
+                    a(href="#" class="stay-btn btn grey lighten-1 message-button not-searched") Ok     
+
+    div(class="row message-window fill" style="display:none")
+        div.col.s8.offset-s2
+            div.card.grey.lighten-1
+                div.card-content.white-text
+                    span.card-title  Please fill all empty fields!
+                div.card-action    
+                    a(href="#" class="stay-btn fill btn grey lighten-1 message-button fill") Ok  
+
+    div(class="row message-window cannot-add" style="display:none")
+        div.col.s8.offset-s2
+            div.card.grey.lighten-1
+                div.card-content.white-text
+                    span.card-title  Cannot add new item. Please clear cart or delete item.
+                div.card-action    
+                    a(href="#" class="stay-btn cannot-add btn grey lighten-1 message-button cannot-add") Ok                  
+
     br
-    div.container
+    div.container.main-content
         div.card
             div.card-content
                 span.card-title Add Item
@@ -56,7 +79,7 @@ body
         ul#item-list.collection
 
     br    
-    footer
+    footer.footer
         div.container
             ul.right 
                 li
