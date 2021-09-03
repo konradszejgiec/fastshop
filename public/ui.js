@@ -10,11 +10,20 @@ class UI {
     window.addEventListener("load", UI.showShoppingCart.bind(this));
     window.addEventListener("load", UI.getStockList.bind(this));
     handleEventListener(".exit-btn", "click", handleExitButton);
-    handleEventListener(".clear-btn", "click", this.clearShoppingList.bind(this));
+    handleEventListener(
+      ".clear-btn",
+      "click",
+      this.clearShoppingList.bind(this)
+    );
     handleEventListener(".add-btn", "click", this.createNewItem.bind(this));
     handleEventListener(".back-btn", "click", hideUpdatePanel);
     handleEventListener(".collection", "click", this.getItemContent.bind(this));
-    handleEventListenerTypes("#item-name", "input", "click", this.handleSearchEngine.bind(this));
+    handleEventListenerTypes(
+      "#item-name",
+      "input",
+      "click",
+      this.handleSearchEngine.bind(this)
+    );
   }
 
   createNewItem(e) {
@@ -29,9 +38,18 @@ class UI {
 
   getItemContent(e) {
     if (!e.target.matches(".fa-pencil")) return;
-    displayUpdatePanel(e.target.parentElement.parentElement.id, e.target.parentElement.parentElement.dataset.id);
-    getUpdateItemValue(this.shoppingCart, e.target.parentElement.parentElement.id);
-    refreshButtonId(e.target.parentElement.parentElement.id, e.target.parentElement.parentElement.dataset.id);
+    displayUpdatePanel(
+      e.target.parentElement.parentElement.id,
+      e.target.parentElement.parentElement.dataset.id
+    );
+    getUpdateItemValue(
+      this.shoppingCart,
+      e.target.parentElement.parentElement.id
+    );
+    refreshButtonId(
+      e.target.parentElement.parentElement.id,
+      e.target.parentElement.parentElement.dataset.id
+    );
     this.updateItem();
     this.deleteItem();
     clearStockList();
@@ -44,7 +62,11 @@ class UI {
       const updatedItem = ShoppingCart.createNewCartItem(e);
       checkingSearchEngineInput(this.stockList, updatedItem, e);
       handleButtonAction(".update-btn", this.shoppingCart, e, updatedItem);
-      updateCartItem("/shoppingcart", e.target.dataset.databaseId, checkingDataCompleteness(updatedItem));
+      updateCartItem(
+        "/shoppingcart",
+        e.target.dataset.databaseId,
+        checkingDataCompleteness(updatedItem)
+      );
       clearStockList();
     });
   }
@@ -56,7 +78,11 @@ class UI {
       const deletedItem = ShoppingCart.createNewCartItem(e);
       checkingSearchEngineInput(this.stockList, deletedItem, e);
       handleButtonAction(".delete-btn", this.shoppingCart, e, deletedItem);
-      deleteCartItem("/shoppingcart", e.target.dataset.databaseId, checkingDataCompleteness(deletedItem));
+      deleteCartItem(
+        "/shoppingcart",
+        e.target.dataset.databaseId,
+        checkingDataCompleteness(deletedItem)
+      );
       clearStockList();
       refreshCart();
     });
