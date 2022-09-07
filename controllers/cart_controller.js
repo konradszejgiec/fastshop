@@ -53,9 +53,24 @@ exports.displaySingleItemContent = async (req, res) => {
       name: cartControllerUtils.getSingleItemInfo(req, cart, "name", item),
       price: cartControllerUtils.getSingleItemInfo(req, cart, "price", item),
       id: cartControllerUtils.getSingleItemInfo(req, cart, "id", item),
-      quantity: cartControllerUtils.getSingleItemInfo(req, cart, "quantity", item),
-      totalItemPrice: cartControllerUtils.getSingleItemInfo(req, cart, "totalItemPrice", item),
-      description: cartControllerUtils.getSingleItemInfo(req, cart, "description", item),
+      quantity: cartControllerUtils.getSingleItemInfo(
+        req,
+        cart,
+        "quantity",
+        item
+      ),
+      totalItemPrice: cartControllerUtils.getSingleItemInfo(
+        req,
+        cart,
+        "totalItemPrice",
+        item
+      ),
+      description: cartControllerUtils.getSingleItemInfo(
+        req,
+        cart,
+        "description",
+        item
+      ),
     });
   } catch (err) {
     res.status(404).end();
@@ -64,7 +79,9 @@ exports.displaySingleItemContent = async (req, res) => {
 };
 
 exports.displayCheckoutContent = async (req, res) => {
-  res.render("checkout", { message: await cartControllerUtils.getCheckoutContentMessage(Cart) });
+  res.render("checkout", {
+    message: await cartControllerUtils.getCheckoutContentMessage(Cart),
+  });
 };
 
 exports.postClientData = async (req, res) => {
@@ -79,10 +96,14 @@ exports.postClientData = async (req, res) => {
 
 exports.updateItem = async (req, res) => {
   try {
-    const updatedItem = await Cart.findByIdAndUpdate(req.body.id, req.body.item, {
-      new: true,
-      runValidators: true,
-    });
+    const updatedItem = await Cart.findByIdAndUpdate(
+      req.body.id,
+      req.body.item,
+      {
+        new: true,
+        runValidators: true,
+      }
+    );
     res.status(200).end();
   } catch (err) {
     res.status(404).end();
@@ -102,7 +123,9 @@ exports.deleteItem = async (req, res) => {
 
 exports.clearCart = async (req, res) => {
   try {
-    await Cart.deleteMany((err) => console.log("Collection removed succesfully"));
+    await Cart.deleteMany((err) =>
+      console.log("Collection removed succesfully")
+    );
     res.status(200).end();
   } catch (err) {
     res.status(404).end();

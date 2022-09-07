@@ -1,7 +1,10 @@
 "use strict";
 
 const handleEventListener = (elementSelector, eventListener, callback) => {
-  return getElementBy(elementSelector).addEventListener(eventListener, callback);
+  return getElementBy(elementSelector).addEventListener(
+    eventListener,
+    callback
+  );
 };
 
 const handleButtonAction = (button, cart, event, item) => {
@@ -44,7 +47,11 @@ const renderCart = (route, cartItemMap) => {
     if (containsAnInvalidValue(item)) {
       resetInputValue();
       return;
-    } else insertItemHTML(".collection", getItemHTML(route || `/shoppingcart/items/${item._id}`, item));
+    } else
+      insertItemHTML(
+        ".collection",
+        getItemHTML(route || `/shoppingcart/items/${item._id}`, item)
+      );
   });
 };
 
@@ -132,28 +139,23 @@ const handleExitButton = () => {
 };
 
 const handleStayButton = (selector) => {
+  if (selector == ".exit") {
+    setElementDisplayStyle(".exit", "block");
+    setElementDisplayStyle(".fill", "none");
+    setElementDisplayStyle(".not-searched", "none");
+    setElementDisplayStyle(".cannot-add", "none");
+    setElementDisplayStyle(".main-content", "none");
+    setElementDisplayStyle(".footer", "none");
+  }
   return document.querySelectorAll(".message-button").forEach((element) => {
-    let searchingElement = `.${element.className.split(" ")[element.className.split(" ").length - 1]}`;
-    if (selector == ".exit") {
-      element.addEventListener("click", () => {
-        setElementDisplayStyle(selector, "none");
-        setElementDisplayStyle(".fill", "none");
-        setElementDisplayStyle(".not-searched", "none");
-        setElementDisplayStyle(".cannot-add", "none");
-        setElementDisplayStyle(".main-content", "block");
-        setElementDisplayStyle(".footer", "block");
-      });
-    } else {
-      element.addEventListener("click", () => {
-        if (searchingElement == selector) {
-          if (getElementDisplayStyle(selector) == "block") {
-            setElementDisplayStyle(selector, "none");
-            setElementDisplayStyle(".main-content", "block");
-            setElementDisplayStyle(".footer", "block");
-          }
-        }
-      });
-    }
+    element.addEventListener("click", () => {
+      setElementDisplayStyle(".exit", "none");
+      setElementDisplayStyle(".fill", "none");
+      setElementDisplayStyle(".not-searched", "none");
+      setElementDisplayStyle(".cannot-add", "none");
+      setElementDisplayStyle(".main-content", "block");
+      setElementDisplayStyle(".footer", "block");
+    });
   });
 };
 
