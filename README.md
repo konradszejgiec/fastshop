@@ -1,12 +1,11 @@
 # Shopping Cart
 
-Link to the project: https://konrad-szejgiec-fastshop.herokuapp.com/
+Link to the project: https://fastshop.cyclic.app/
 
 ## Table of contents
 
 - [General info](#general-info)
 - [Technologies](#technologies)
-- [Running the application](#running-the-application)
 - [Notes](#notes)
 
 ## General info
@@ -20,10 +19,6 @@ It's a simple shopping cart with add/update/remove options on client's request. 
 - Express
 - MongoDB
 - PUG
-
-## Running the application
-
-https://konrad-szejgiec-fastshop.herokuapp.com/
 
 ## Notes
 
